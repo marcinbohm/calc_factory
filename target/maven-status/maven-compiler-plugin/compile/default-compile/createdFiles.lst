@@ -1,0 +1,16 @@
+com\mb\calculator\CalculatorFactory.class
+com\mb\exception\FailureException.class
+com\mb\Pair.class
+com\mb\calculator\operators\Addition.class
+com\mb\files\FileReader.class
+com\mb\calculator\CalculatorFactory$1.class
+com\mb\util\NumericUtil.class
+com\mb\calculator\Calculator.class
+com\mb\calculator\operators\Division.class
+com\mb\Main.class
+com\mb\calculator\operators\Difference.class
+com\mb\Globals.class
+com\mb\calculator\operators\Multiplication.class
+com\mb\expression\MathExpressionFactory.class
+com\mb\OperatorsEnum.class
+com\mb\util\CalculatorUtil.class
