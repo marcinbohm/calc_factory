@@ -23,7 +23,7 @@ public class FileReader {
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(Globals.FROM_PATH + File.separator + Globals.FROM_FILENAME))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.length() == 0)
+                if (line.trim().length() == 0)
                     continue;
                 String[] lineStringTable = line.split("\\s+");
                 if (lineStringTable[0] != null
