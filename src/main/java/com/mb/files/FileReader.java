@@ -21,8 +21,11 @@ public class FileReader {
         LinkedList<Pair<String, Integer>> operatorValueCollection = new LinkedList<>();
 
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(Globals.FROM_PATH + File.separator + Globals.FROM_FILENAME))) {
-            while (reader.ready()) {
-                String[] lineStringTable = reader.readLine().split("\\s+");
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.length() == 0)
+                    continue;
+                String[] lineStringTable = line.split("\\s+");
                 if (lineStringTable[0] != null
                         && lineStringTable[1] != null
                         && NumericUtil.isNumeric(lineStringTable[1])
