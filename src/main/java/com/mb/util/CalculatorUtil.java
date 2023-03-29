@@ -25,19 +25,23 @@ public class CalculatorUtil {
     }
 
     public static BigDecimal calculate(String num1, String operator, String num2) {
-        num1 = num1.trim();
-        num2 = num2.trim();
-        operator = operator.trim();
-        if (StringUtils.isNotBlank(num1)
-                && StringUtils.isNotBlank(num2)
-                && StringUtils.isNotBlank(operator)
-                && OperatorsEnum.getOperatorsSet().contains(operator)
-                && NumericUtil.isNumeric(num1)
-                && NumericUtil.isNumeric(num2))
-            return CalculatorFactory
-                    .getInstance(operator)
-                    .calculate(new BigDecimal(num1), new BigDecimal(num2));
-        else
-            throw new FailureException("Operator not found or num parameter not numeric or parameter is blank!");
+        try {
+            if (StringUtils.isNotBlank(num1)
+                    && StringUtils.isNotBlank(num2)
+                    && StringUtils.isNotBlank(operator)
+                    && OperatorsEnum.getOperatorsSet().contains(operator)) {
+                num1 = num1.trim();
+                num2 = num2.trim();
+                operator = operator.trim();
+                return CalculatorFactory
+                        .getInstance(operator)
+                        .calculate(new BigDecimal(num1), new BigDecimal(num2));
+            } else
+                throw new FailureException("Operator not found or parameter is blank!");
+        } catch (NumberFormatException e) {
+            throw new FailureException("Parsed number is not BigDecimal value!");
+        } catch (NullPointerException e) {
+            throw new NullPointerException("No parameter parsed to calculate function, can't do further calculations!");
+        }
     }
 }
