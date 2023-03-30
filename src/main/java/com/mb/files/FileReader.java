@@ -10,39 +10,45 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 public class FileReader {
 
     public static Collection<Pair<String, Integer>> getOperatorsWithValuesFromFile() {
 
-        LinkedList<Pair<String, Integer>> operatorValueCollection = new LinkedList<>();
+        List<Pair<String, Integer>> operatorValueCollection = new LinkedList<>();
+        Path filePath = Paths.get(Globals.FROM_PATH, Globals.FROM_FILENAME);
 
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get(Globals.FROM_PATH + File.separator + Globals.FROM_FILENAME))) {
+        try (BufferedReader reader = Files.newBufferedReader(filePath)) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.trim().length() == 0)
-                    continue;
-                String[] lineStringTable = line.split("\\s+");
-                if (lineStringTable[0] != null
-                        && lineStringTable[1] != null
-                        && NumericUtil.isNumeric(lineStringTable[1])
-                        && lineStringTable.length == 2) {
-                    operatorValueCollection.add(new Pair<>(lineStringTable[0], Integer.parseInt(lineStringTable[1])));
-                    if (lineStringTable[0].trim().equals(OperatorsEnum.APPLY.getName()))
-                        break;
+                String[] lineStringTable = line.trim().split("\\s+");
+                if (lineStringTable.length == 2) {
+                    String operatorName = lineStringTable[0];
+                    String operatorValueString = lineStringTable[1];
+                    if (NumericUtil.isNumeric(operatorValueString)) {
+                        int operatorValue = Integer.parseInt(operatorValueString);
+                        operatorValueCollection.add(new Pair<>(operatorName, operatorValue));
+                        if (OperatorsEnum.APPLY.getName().equals(operatorName)) {
+                            break;
+                        }
+                    }
                 }
             }
         } catch (IOException e) {
-            System.out.println("There was a problem with reading file from configured path!");
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Not proper format of expression provided in file to read!");
+            throw new FailureException("There was a problem with reading file from configured path!");
+        } catch (NumberFormatException e) {
+            throw new FailureException("Not proper format of expression provided in file to read!");
         }
 
-        if (operatorValueCollection.isEmpty())
+        if (operatorValueCollection.isEmpty()) {
             throw new FailureException("Can't operate on empty operator list! Enter proper values to file!");
+        }
 
         return operatorValueCollection;
     }

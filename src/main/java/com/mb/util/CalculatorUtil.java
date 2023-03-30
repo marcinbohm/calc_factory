@@ -7,41 +7,40 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CalculatorUtil {
 
     public static BigDecimal evalIgnoreMathPrec(final String mathExpression) {
+        List<String> expressionList = splitExpression(mathExpression);
+        BigDecimal val = calculate(expressionList.get(0), expressionList.get(1), expressionList.get(2));
 
-        List<String> expressionList =
-                new ArrayList<>(Arrays.asList(mathExpression.replaceAll("\\s", "").split("((?=\\+|-|\\*|/)|(?<=\\+|-|\\*|/))")));
-        int idx = 0;
-        BigDecimal val = calculate(expressionList.get(idx), expressionList.get(idx + 1), expressionList.get(idx + 2));
-        idx += 2;
-        while (expressionList.size() - 1 > idx) {
-            val = calculate(val.toString(), expressionList.get(idx + 1), expressionList.get(idx + 2));
-            idx += 2;
-        }
+        for (int i = 3; i < expressionList.size(); i += 2)
+            val = calculate(val.toString(), expressionList.get(i), expressionList.get(i + 1));
+
         return val;
     }
 
-    public static BigDecimal calculate(String num1, String operator, String num2) {
+    private static List<String> splitExpression(final String mathExpression) {
+        return Arrays.stream(mathExpression.replaceAll("\\s", "")
+                        .split("((?=\\+|-|\\*|/)|(?<=\\+|-|\\*|/))"))
+                .collect(Collectors.toList());
+    }
+
+    public static BigDecimal calculate(String num1, String operator, String num2) throws FailureException {
+        if (StringUtils.isBlank(num1) || StringUtils.isBlank(num2) || StringUtils.isBlank(operator))
+            throw new FailureException("Blank parameter provided!");
+
+        operator = operator.trim();
+
+        if (!OperatorsEnum.getOperatorsSet().contains(operator))
+            throw new FailureException("Operator not found!");
+
         try {
-            if (StringUtils.isNotBlank(num1)
-                    && StringUtils.isNotBlank(num2)
-                    && StringUtils.isNotBlank(operator)
-                    && OperatorsEnum.getOperatorsSet().contains(operator)) {
-                num1 = num1.trim();
-                num2 = num2.trim();
-                operator = operator.trim();
-                return CalculatorFactory
-                        .getInstance(operator)
-                        .calculate(new BigDecimal(num1), new BigDecimal(num2));
-            } else
-                throw new FailureException("Operator not found or parameter is blank!");
+            return CalculatorFactory.getInstance(operator)
+                    .calculate(new BigDecimal(num1.trim()), new BigDecimal(num2.trim()));
         } catch (NumberFormatException e) {
-            throw new FailureException("Parsed number is not BigDecimal value!");
-        } catch (NullPointerException e) {
-            throw new NullPointerException("No parameter parsed to calculate function, can't do further calculations!");
+            throw new FailureException("Parsed number is not a BigDecimal value!");
         }
     }
 }

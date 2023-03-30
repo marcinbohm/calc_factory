@@ -17,32 +17,22 @@ public class MathExpressionFactory {
         this.expression = expression;
     }
 
-    public String getExpression(Queue<Pair<String, Integer>> expressionElements, Integer applyValue) {
+    public String getExpression(Queue<Pair<String, Integer>> expressionElements, Integer applyValue) throws FailureException {
+        applyValue = Optional.ofNullable(applyValue).orElseThrow(() -> new FailureException("applyValue not provided"));
 
-        applyValue = Optional.ofNullable(applyValue)
-                .orElseThrow(() -> new FailureException("applyValue not provided"));
-
+        StringBuilder expression = new StringBuilder();
         expression.append(applyValue).append(" ");
 
-        while (!expressionElements.isEmpty()) {
-            try {
-                Optional<Integer> operatorValue = Optional.ofNullable(expressionElements.element().getElement1());
-                Optional<String> operatorName = Optional.ofNullable(expressionElements.element().getElement0());
-                if (operatorValue.isPresent()
-                        && operatorName.isPresent()) {
-                    Optional<OperatorsEnum> optionalOperator =
-                            OperatorsEnum.fromName(operatorName.get());
-                    optionalOperator.ifPresent(operatorsEnum -> {
-                        expression.append(operatorsEnum.getOperator())
-                                .append(" ")
-                                .append(operatorValue.get()).append(" ");
-                    });
-                }
-                expressionElements.remove();
-            } catch (NoSuchElementException e) {
-                break;
+        for (Pair<String, Integer> expressionElement : expressionElements) {
+            String operatorName = expressionElement.getElement0();
+            Integer operatorValue = expressionElement.getElement1();
+            if (operatorName != null && operatorValue != null) {
+                OperatorsEnum operator = OperatorsEnum.fromName(operatorName)
+                        .orElseThrow(() -> new FailureException("Invalid operator name: " + operatorName));
+                expression.append(operator.getOperator()).append(" ").append(operatorValue).append(" ");
             }
         }
-        return this.expression.toString().trim();
+
+        return expression.toString().trim();
     }
 }

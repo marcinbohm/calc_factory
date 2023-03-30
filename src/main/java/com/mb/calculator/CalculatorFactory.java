@@ -10,20 +10,21 @@ import java.util.Optional;
 
 public class CalculatorFactory {
 
-    public static Calculator getInstance(String operator) {
-        Optional<OperatorsEnum> optionalOperator =
-                OperatorsEnum.fromOperator(operator);
-        if (optionalOperator.isPresent())
-            switch (optionalOperator.get()) {
-                case ADD:
-                    return new Addition();
-                case SUBTRACT:
-                    return new Difference();
-                case DIVIDE:
-                    return new Division();
-                case MULTIPLY:
-                    return new Multiplication();
-            }
-        throw new NullPointerException("Method not found");
+    public static Calculator getInstance(String operator) throws IllegalArgumentException {
+        OperatorsEnum operatorEnum = OperatorsEnum.fromOperator(operator)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid operator: " + operator));
+
+        switch (operatorEnum) {
+            case ADD:
+                return new Addition();
+            case SUBTRACT:
+                return new Difference();
+            case DIVIDE:
+                return new Division();
+            case MULTIPLY:
+                return new Multiplication();
+            default:
+                throw new IllegalArgumentException("Unsupported operator: " + operator);
+        }
     }
 }

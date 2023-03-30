@@ -14,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @RunWith(MockitoJUnitRunner.class)
 public class CalculatorFactoryTest {
 
-    @Test(expected = NullPointerException.class)
-    public void shouldThrowNPE() {
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowILE() {
         CalculatorFactory.getInstance("$");
     }
 
