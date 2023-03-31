@@ -17,7 +17,7 @@ public class MathExpressionFactory {
         this.expression = expression;
     }
 
-    public String getExpression(Queue<Pair<String, Integer>> expressionElements, Integer applyValue) throws FailureException {
+    public static String getExpression(Queue<Pair<String, Integer>> expressionElements, Integer applyValue) throws FailureException {
         applyValue = Optional.ofNullable(applyValue).orElseThrow(() -> new FailureException("applyValue not provided"));
 
         StringBuilder expression = new StringBuilder();
