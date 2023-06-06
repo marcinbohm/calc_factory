@@ -1,26 +1,36 @@
 package com.mb;
 
+import com.mb.calculator.Calculator;
+import com.mb.calculator.operators.Addition;
+import com.mb.calculator.operators.Difference;
+import com.mb.calculator.operators.Division;
+import com.mb.calculator.operators.Multiplication;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum OperatorsEnum {
 
-    ADD("+", "add"),
-    SUBTRACT("-", "subtract"),
-    DIVIDE("/", "divide"),
-    MULTIPLY("*", "multiply"),
-    APPLY("", "apply");
+    ADD("+", "add", Addition::new),
+    SUBTRACT("-", "subtract", Difference::new),
+    DIVIDE("/", "divide", Division::new),
+    MULTIPLY("*", "multiply", Multiplication::new),
+    APPLY("", "apply", null);
 
     private final String operator;
     private final String name;
 
-    OperatorsEnum(String operator, String name) {
+    private final BiFunction<BigDecimal, BigDecimal, Calculator> operation;
+
+    OperatorsEnum(String operator, String name, BiFunction<BigDecimal, BigDecimal, Calculator> operation) {
         this.operator = operator;
         this.name = name;
+        this.operation = operation;
     }
 
     public String getOperator() {
@@ -29,6 +39,10 @@ public enum OperatorsEnum {
 
     public String getName() {
         return this.name;
+    }
+
+    public BiFunction<BigDecimal, BigDecimal, Calculator> getOperation() {
+        return operation;
     }
 
     public static Optional<OperatorsEnum> fromOperator(String operator) {

@@ -5,10 +5,14 @@ import com.mb.util.NumericUtil;
 
 import java.math.BigDecimal;
 
-public class Addition implements Calculator {
+public class Addition extends Calculator {
+
+    public Addition(BigDecimal num1, BigDecimal num2) {
+        super(num1, num2);
+    }
 
     @Override
-    public BigDecimal calculate(BigDecimal num1, BigDecimal num2) {
-        return num1.add(num2);
+    public BigDecimal calculate() {
+        return getNum1().add(getNum2());
     }
 }

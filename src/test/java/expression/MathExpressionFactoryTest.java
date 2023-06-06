@@ -28,7 +28,7 @@ public class MathExpressionFactoryTest {
 
         MathExpressionFactory mathExpressionFactory = new MathExpressionFactory(new StringBuilder());
 
-        mathExpressionFactory.getExpression(expressionElements, applyValue);
+        MathExpressionFactory.getExpression(expressionElements, applyValue);
     }
 
     @Test

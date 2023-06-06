@@ -21,9 +21,8 @@ public class CalculatorUtil {
         return val;
     }
 
-    private static List<String> splitExpression(final String mathExpression) {
-        return Arrays.stream(mathExpression.replaceAll("\\s", "")
-                        .split("((?=\\+|-|\\*|/)|(?<=\\+|-|\\*|/))"))
+    public static List<String> splitExpression(final String mathExpression) {
+        return Arrays.stream(mathExpression.split("\\s"))
                 .collect(Collectors.toList());
     }
 
@@ -37,8 +36,10 @@ public class CalculatorUtil {
             throw new FailureException("Operator not found!");
 
         try {
-            return CalculatorFactory.getInstance(operator)
-                    .calculate(new BigDecimal(num1.trim()), new BigDecimal(num2.trim()));
+            return CalculatorFactory.getOperation(operator)
+                    .apply(new BigDecimal(num1.trim()), new BigDecimal(num2.trim()))
+                    .validated()
+                    .calculate();
         } catch (NumberFormatException e) {
             throw new FailureException("Parsed number is not a BigDecimal value!");
         }
